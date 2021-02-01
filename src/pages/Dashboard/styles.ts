@@ -76,11 +76,14 @@ export const FoodsContainer = styled.View`
 `;
 
 export const FoodList = styled.View`
+  flex: 1;
   padding: 0 20px;
   margin-top: 16px;
 `;
 
 export const Food = styled.TouchableOpacity`
+  flex: 1;
+  height: auto;
   display: flex;
   flex-direction: row;
   align-items: center;

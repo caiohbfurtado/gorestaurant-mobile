@@ -27,6 +27,8 @@ import {
   FoodDescription,
   FoodPricing,
 } from './styles';
+import { format } from 'prettier';
+import Routes from 'src/routes';
 
 interface Food {
   id: number;
@@ -55,11 +57,26 @@ const Dashboard: React.FC = () => {
 
   async function handleNavigate(id: number): Promise<void> {
     // Navigate do ProductDetails page
+    navigation.navigate(`FoodDetails`, { id });
   }
 
   useEffect(() => {
     async function loadFoods(): Promise<void> {
-      // Load Foods from API
+      const foodsResponse = await api.get('/foods', {
+        params: {
+          category_like: selectedCategory,
+          name_like: searchValue,
+        },
+      });
+
+      if (foodsResponse.status === 200) {
+        setFoods(
+          foodsResponse.data.map((food: Food) => ({
+            ...food,
+            formattedPrice: formatValue(food.price),
+          })),
+        );
+      }
     }
 
     loadFoods();
@@ -67,7 +84,10 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function loadCategories(): Promise<void> {
-      // Load categories from API
+      const response = await api.get('/categories');
+      if (response.status === 200) {
+        setCategories(response.data);
+      }
     }
 
     loadCategories();
@@ -75,6 +95,11 @@ const Dashboard: React.FC = () => {
 
   function handleSelectCategory(id: number): void {
     // Select / deselect category
+    if (selectedCategory === id) {
+      setSelectedCategory(undefined);
+    } else {
+      setSelectedCategory(id);
+    }
   }
 
   return (
